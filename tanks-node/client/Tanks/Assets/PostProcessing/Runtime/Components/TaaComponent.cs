@@ -2,6 +2,8 @@ using System;
 
 namespace UnityEngine.PostProcessing
 {
+
+
     public sealed class TaaComponent : PostProcessingComponentRenderTexture<AntialiasingModel>
     {
         static class Uniforms

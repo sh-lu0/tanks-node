@@ -1,0 +1,17 @@
+﻿<Properties StartupConfiguration="{C7E45AC5-E64D-261F-DF12-5BF4A531E67F}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/SocketIO/Server/beep.js">
+    <Files>
+      <File FileName="Assets/_Completed-Assets/Scripts/Managers/GameManager.cs" Line="15" Column="45" />
+      <File FileName="Assets/SocketIO/Scripts/Test/TestSocketIO.cs" Line="81" Column="32" />
+      <File FileName="Assets/SocketIO/Scripts/SocketIO/SocketIOEvent.cs" Line="1" Column="1" />
+      <File FileName="Assets/SocketIO/Server/beep.js" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="ee65d7b2-ed4c-485e-aa45-af40601e2e70" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
