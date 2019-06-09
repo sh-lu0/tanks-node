@@ -36,13 +36,13 @@ server.listen(
 
 io.on('connection', function (socket) {
   console.log("connection")
-  socket.on('beep', function () {
-    console.log("beep");
+  socket.on('test', function () {
+    console.log("beepイベント");
     socket.emit('boop');
   });
 
-  socket.on('test', function (json) {
-    console.log("action");
-    socket.emit('action', json);
+  socket.on('test', function () {
+    console.log("testイベント");
+    socket.emit('boop');
   });
 })

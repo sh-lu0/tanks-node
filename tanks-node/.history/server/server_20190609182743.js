@@ -41,8 +41,8 @@ io.on('connection', function (socket) {
     socket.emit('boop');
   });
 
-  socket.on('test', function (json) {
-    console.log("action");
-    socket.emit('action', json);
+  socket.on('test', function () {
+    console.log("testイベント");
+    socket.emit('action');
   });
 })

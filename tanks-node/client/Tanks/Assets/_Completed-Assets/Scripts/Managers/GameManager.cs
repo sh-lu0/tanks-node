@@ -3,6 +3,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+// ネットワーク用
+using SocketIO;
+
 namespace Complete
 {
     public class GameManager : MonoBehaviour
@@ -22,6 +25,92 @@ namespace Complete
         private TankManager m_RoundWinner;          // Reference to the winner of the current round.  Used to make an announcement of who won.
         private TankManager m_GameWinner;           // Reference to the winner of the game.  Used to make an announcement of who won.
 
+        private SocketIOComponent socket;
+        private GameObject me;
+        private GameObject rival;
+
+        private void Awake()
+        {
+            GameObject go = GameObject.Find("SocketIO");
+            socket = go.GetComponent<SocketIOComponent>();
+
+            socket.On("open", TestOpen);
+            socket.On("boop", TestBoop);
+            socket.On("action", TestAction);
+            socket.On("error", TestError);
+            socket.On("close", TestClose);
+
+            //StartCoroutine("BeepBoop");
+        }
+
+        private IEnumerator BeepBoop()
+        {
+            // wait 1 seconds and continue
+            yield return new WaitForSeconds(1);
+
+            socket.Emit("beep");
+
+            // wait 3 seconds and continue
+            yield return new WaitForSeconds(3);
+
+            socket.Emit("beep");
+
+            // wait 2 seconds and continue
+            yield return new WaitForSeconds(2);
+
+            socket.Emit("beep");
+
+            // wait ONE FRAME and continue
+            yield return null;
+
+            socket.Emit("beep");
+            socket.Emit("beep");
+        }
+
+        public void TestOpen(SocketIOEvent e)
+        {
+            Debug.Log("[SocketIO] Open received: " + e.name + " " + e.data);
+            Debug.Log(socket.sid);
+        }
+
+        public void TestBoop(SocketIOEvent e)
+        {
+            Debug.Log("[SocketIO] Boop received: " + e.name + " " + e.data);
+
+            if (e.data == null) { return; }
+
+            Debug.Log(
+                "#####################################################" +
+                "THIS: " + e.data.GetField("this").str +
+                "#####################################################"
+            );
+        }
+
+        public void TestError(SocketIOEvent e)
+        {
+            Debug.Log("[SocketIO] Error received: " + e.name + " " + e.data);
+        }
+
+        public void TestClose(SocketIOEvent e)
+        {
+            Debug.Log("[SocketIO] Close received: " + e.name + " " + e.data);
+        }
+
+        public void TestAction(SocketIOEvent e)
+        {
+            Debug.Log("[SocketIO] Action received: " + e.name + " " + e.data);
+
+            if (e.data == null) { return; }
+
+            Debug.Log(
+                "#####################################################" +
+                "THIS: " + e.data.GetField("this").str +
+                "#####################################################"
+            );
+        }
+
+
+
 
         private void Start()
         {
@@ -32,10 +121,35 @@ namespace Complete
             SpawnAllTanks();
             SetCameraTargets();
 
+            me = GameObject.Find("player1");
+            rival = GameObject.Find("player2");
+
             // Once the tanks have been created and the camera is using them as targets, start the game.
-            StartCoroutine (GameLoop ());
+            //StartCoroutine (GameLoop ());
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                JSONObject jsonobj = new JSONObject(JSONObject.Type.OBJECT);
+                jsonobj.AddField("event","イベント");
+                jsonobj.AddField("path", "パス");
+
+                //string jsonText = "{\"message\":\"SampleText\",\"num\":1}";
+                //JSONObject json = new JSONObject(jsonText);
+                //Debug.Log("T");
+                socket.Emit("test", jsonobj);
+                //Debug.Log(me.transform.position);
+                //JSONObjectからデータの引き出し.
+                //string message = json.GetField("message").str;
+                //double num = json.GetField("num").n;
+
+                //出力して確認する.
+                //Debug.Log(message + "," + num.ToString());
+
+            }
+        }
 
         private void SpawnAllTanks()
         {
@@ -45,6 +159,7 @@ namespace Complete
                 // ... create them, set their player number and references needed for control.
                 m_Tanks[i].m_Instance =
                     Instantiate(m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
+                    m_Tanks[i].m_Instance.name = "player" + (i+1);
                 m_Tanks[i].m_PlayerNumber = i + 1;
                 m_Tanks[i].Setup();
             }

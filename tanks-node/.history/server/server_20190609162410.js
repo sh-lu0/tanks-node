@@ -35,14 +35,11 @@ server.listen(
 // io.attach(4567);
 
 io.on('connection', function (socket) {
-  console.log("connection")
   socket.on('beep', function () {
-    console.log("beep");
     socket.emit('boop');
   });
 
-  socket.on('test', function (json) {
-    console.log("action");
-    socket.emit('action', json);
+  socket.on('test', function () {
+    socket.emit('boop');
   });
 })
