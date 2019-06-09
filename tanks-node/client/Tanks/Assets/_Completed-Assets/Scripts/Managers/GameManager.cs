@@ -28,17 +28,22 @@ namespace Complete
         private SocketIOComponent socket;
         private GameObject me;
         private GameObject rival;
+        private int pid;
 
         private void Awake()
         {
             GameObject go = GameObject.Find("SocketIO");
             socket = go.GetComponent<SocketIOComponent>();
+            pid = System.Diagnostics.Process.GetCurrentProcess().Id;
 
-            socket.On("open", TestOpen);
-            socket.On("boop", TestBoop);
+            socket.On("open", Open);
+            //socket.On("boop", TestBoop);
+            //socket.On("matching",Matching);
             socket.On("action", TestAction);
             socket.On("error", TestError);
             socket.On("close", TestClose);
+
+            //Debug.Log("PID:" + System.Diagnostics.Process.GetCurrentProcess().Id);
 
             //StartCoroutine("BeepBoop");
         }
@@ -67,10 +72,10 @@ namespace Complete
             socket.Emit("beep");
         }
 
-        public void TestOpen(SocketIOEvent e)
+        public void Open(SocketIOEvent e)
         {
             Debug.Log("[SocketIO] Open received: " + e.name + " " + e.data);
-            Debug.Log(socket.sid);
+            //Debug.Log("Socket ID:" + socket.sid);
         }
 
         public void TestBoop(SocketIOEvent e)
@@ -102,14 +107,22 @@ namespace Complete
 
             if (e.data == null) { return; }
 
-            Debug.Log(
-                "#####################################################" +
-                "THIS: " + e.data.GetField("this").str +
-                "#####################################################"
-            );
+            //Debug.Log(
+            //    "#####################################################" +
+            //    "THIS: " + e.data.GetField("this").str +
+            //    "#####################################################"
+            //);
+
+            //double num = e.data.GetField("pos_x").n;
+            Debug.Log(e.data.GetField("pos_x").str);
+
+            Vector3 new_pos;
+            new_pos.x = e.data.GetField("pos_x").n;
+            new_pos.y = e.data.GetField("pos_y").n;
+            new_pos.z = e.data.GetField("pos_z").n;
+
+            rival.transform.position = new_pos;
         }
-
-
 
 
         private void Start()
@@ -124,6 +137,10 @@ namespace Complete
             me = GameObject.Find("player1");
             rival = GameObject.Find("player2");
 
+            //JSONObject jsonPid = new JSONObject(JSONObject.Type.OBJECT);
+            //jsonPid.AddField("pid", pid);
+            //socket.Emit("open", jsonPid);
+
             // Once the tanks have been created and the camera is using them as targets, start the game.
             //StartCoroutine (GameLoop ());
         }
@@ -133,8 +150,10 @@ namespace Complete
             if (Input.GetKeyDown(KeyCode.T))
             {
                 JSONObject jsonobj = new JSONObject(JSONObject.Type.OBJECT);
-                jsonobj.AddField("event","イベント");
-                jsonobj.AddField("path", "パス");
+                jsonobj.AddField("pid", pid);
+                jsonobj.AddField("pos_x", me.transform.position.x);
+                jsonobj.AddField("pos_y", me.transform.position.y);
+                jsonobj.AddField("pos_z", me.transform.position.z);
 
                 //string jsonText = "{\"message\":\"SampleText\",\"num\":1}";
                 //JSONObject json = new JSONObject(jsonText);

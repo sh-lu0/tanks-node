@@ -38,11 +38,6 @@ server.listen(
 
 io.on('connection', function (socket) {
   console.log("connection")
-  socket.on('open', function (json) {
-    console.log("[open]" + json);
-    socket.emit('open', json);
-  });
-
   socket.on('beep', function () {
     console.log("beep");
     socket.emit('boop');
@@ -53,5 +48,5 @@ io.on('connection', function (socket) {
     socket.emit('action', json);
   });
 
-
+  
 })

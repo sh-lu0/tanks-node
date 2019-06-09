@@ -39,8 +39,8 @@ server.listen(
 io.on('connection', function (socket) {
   console.log("connection")
   socket.on('open', function (json) {
-    console.log("[open]" + json);
-    socket.emit('open', json);
+    console.log("action");
+    socket.emit('action', json);
   });
 
   socket.on('beep', function () {
